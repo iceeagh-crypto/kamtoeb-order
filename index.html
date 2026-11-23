@@ -2329,7 +2329,7 @@ var qrcode = function() {
 <script>
 const $=s=>document.querySelector(s),fmt=n=>'฿'+(+n).toLocaleString('th-TH',{maximumFractionDigits:2}),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 /* ตั้งค่าร้าน: chat = LINE OA ของร้าน เช่น '@kamterb' (เว้นว่างได้) ; เมนู/พื้นที่ส่งต้องตรงกับหลังบ้าน */
-const CFG={shop:'คำเติบ',chat:'@374lkodz',
+const CFG={shop:'คำเติบ',chat:'@374lkodz',hook:'https://script.google.com/macros/s/AKfycbxAqjoHa1UF1-ynW08mR-6f-7Ld7XbQboQBjU8z-HVXtQJnctZCXss4sHpyYtxeuiLu/exec',
 qr:'00020101021130810016A00000067701011201150107537000882050219TX120950WV1115450310315ITTHIPOLKHUIEKA53037645802TH6208070400006304B61F',
 menu:[[1,'กะเพราหมูสับ','กะเพรา',69,'ไข่ดาว:10'],[2,'กะเพราไก่กรอบ','กะเพรา',69,'ไข่ดาว:10'],[3,'กะเพรากุ้ง','กะเพรา',69,'ไข่ดาว:10'],[4,'กะเพรากุ้งหมูสับ','กะเพรา',79,'ไข่ดาว:10'],[5,'ข้าวไก่ทอดซอสเทอริยากิ (ซอสใหม่)','ไก่',69,''],[6,'ข้าวยำไก่แซ่บ','ไก่',69,''],[7,'ข้าวไก่กรอบ','ไก่',59,''],[8,'ข้าวไข่เจียว','เมนูไข่',55,'หมูสับ:10,กุ้ง:10,กุนเชียง:10,ปูอัด:10,ไส้กรอก:10']],
 zones:[['Dcondo Vivid',0,['dcondo','vivid','ดีคอนโด','วิวิด','วีวิด']],['Hype',0,['hype','ไฮป์','ไฮพ์']],['ฝั่งตรงข้าม ม.',10,['ฝั่งตรงข้าม','ตรงข้ามม']],['Kave Condo',10,['kave','เคฟ','คาฟ']],['Attitude',10,['attitude','แอททิจูด','แอตติจูด']],['ฝั่งพลัม',10,['พลัม','plum','ฝั่งพลัม']],['ซอยรังสิตภิรมย์',10,['รังสิตภิรมย์','ภิรมย์','ซอยรังสิต','rangsitphirom']]]};
@@ -2377,7 +2377,7 @@ function msg(o){const L=['🍜 '+CFG.shop+' — ออเดอร์ #'+o.tk.sl
 function submit(){const c=st;if(!c.cart.length)return;if(c.ot==='dine'&&!c.t)return toast('ระบุหมายเลขโต๊ะ');
  if(c.ot==='del'&&!(c.cu.z&&c.cu.n.trim()&&c.cu.p.trim()&&c.cu.a.trim()))return toast('เลือกพื้นที่ และกรอกชื่อ เบอร์ ที่อยู่ให้ครบ');
  const o={tk:Math.random().toString(36).slice(2,10),type:c.ot,table:c.ot==='dine'?c.t:'',items:c.cart.map(({k,...r})=>r),fee:fee(),zone:c.ot==='del'?c.cu.z:'',cust:c.ot==='del'?c.cu.n.trim():'',phone:c.ot==='del'?c.cu.p.trim():'',addr:c.ot==='del'?c.cu.a.trim():''};
- o.total=sum(o.items)+o.fee;o.text=msg(o);st.done=o;st.cart=[];st.step='done';render()}
+ o.total=sum(o.items)+o.fee;o.text=msg(o);if(CFG.hook)fetch(CFG.hook,{method:'POST',mode:'no-cors',body:JSON.stringify(o)}).catch(()=>{});st.done=o;st.cart=[];st.step='done';render()}
 async function shareMsg(){const t=st.done.text;try{if(navigator.share)await navigator.share({text:t});else{await navigator.clipboard.writeText(t);toast('คัดลอกข้อความแล้ว นำไปวางในแชทร้าน')}}catch(e){if(e.name!=='AbortError')toast('แชร์ไม่ได้ ลองกดคัดลอก')}}
 async function copyMsg(){try{await navigator.clipboard.writeText(st.done.text);toast('คัดลอกแล้ว นำไปวางในแชทร้าน')}catch(e){toast('คัดลอกไม่ได้ กดค้างที่ข้อความเพื่อคัดลอก')}}
 function vDone(){const o=st.done,line=CFG.chat?`<a href="https://line.me/R/oaMessage/${encodeURIComponent(CFG.chat)}/?${encodeURIComponent(o.text)}" target="_blank" rel="noopener"><button class="pri" style="margin-top:8px">ส่งทาง LINE ร้าน</button></a>`:'';
